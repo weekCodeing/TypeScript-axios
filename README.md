@@ -361,10 +361,254 @@ class TextBox extends Control {
 
 ## 类
 
+- 基础示例
+- 继承
+- 公共，私有与受保护的修饰符
+- readonly修饰符
+- 存取器
+- 静态属性
+- 抽象类
+- 高级技巧
 
+```
+class Greeter {
+	greeting: string
+	constructor(message: string) {
+		this.greeting = message
+	}
+	greet() {
+		return "hello" + this.greeting
+	}
+}
+let greeter = new Greeter("world")
+greeter.greet()
+```
 
+基础+继承：
 
+```
+class Animal {
+	move(distance: number = 0) {
+		console.log('Animal moved ${distance}m')
+	}
+}
+class Dog extends Animal {
+	bark() {
+		console.log('Woof')
+	}
+}
 
+const dog = new Dog()
+dog.bark()
+dog.move(10)
+```
+
+```
+class Animal {
+	name: string
+	constructor(name: string) {
+		this.name = name
+	}
+	move(distance: number = 0) {
+		console.log(`${this.name} moved ${distance}m`)
+	}
+}
+
+class Snake extends Animal {
+	constructor(name: string) {
+		super(name)
+	}
+	move(distance: number = 5) {
+		console.log('Slithering...')
+		super.move(distance)
+	}
+}
+
+class Horse extends Animal {
+	constructor(name: string) {
+		super(name)
+	}
+	move(distance: number = 45) {
+		console.log('Galloping...'),
+		super.move(distance)
+	}
+}
+
+let sam = new Snake('Sammy')
+let tom: Animal = new Horse('Tommy')
+
+sam.move()
+tom.move(34)
+```
+
+修饰符+readonly修饰符
+
+```
+class Animal {
+	private name: string
+	
+	constructor(name: string) {
+		this.name = name
+	}
+	move(distance: number = 0) {
+		console.log(`${this.name} moved ${distance}m`)
+	}
+}
+class Rhino extends Animal {
+	constructor() {
+		super('Rhino')
+	}
+}
+class Employee {
+	private name: string
+	constructor(name: string) {
+		this.name = name
+	}
+}
+
+let animal = new Animal('Goat')
+let rhino = new Rhino()
+let employee = new Employee('Bob')
+```
+
+```
+animal = rhino //ok
+animal = employee //error
+```
+
+```
+class Person {
+	protected name: string
+	
+	constructor(name: string) {
+		this.name = name
+	}
+}
+
+class Employee extends Person {
+	private department: string
+	
+	constructor(name: string, department: string) {
+		super(name)
+		this.department = department
+	}
+	
+	getElevatorPitch() {
+		return `Hello, my name is ${this.name} and I work in ${this.department}.`
+	}
+}
+
+let howard = new Employee('Howard', 'Sales')
+```
+
+```
+class Person {
+	readonly name
+	
+	constructor(name: string) {
+		this.name = name
+	}
+}
+let john = new Person('John')
+console.log(john.name)
+
+john.name = '' // error
+```
+
+> 存取器
+
+```
+class Employee {
+	fullName: string
+}
+let employee = new Employee()
+employee.fullName = 'Bob Smith'
+if (employee.fullName) {
+	console.log(employee.fullName)
+}
+```
+
+```
+let passcode = 'secret passcode'
+
+class Employee {
+	private _fullName: string
+	get fullName(): string {
+		return this._fullName
+	}
+	
+	set fullName(newName: string) {
+		if(passcode && passcode === 'secret passcode') {
+			this._fullName = newName
+		} else {
+			console.log('Error: Unauthorized update of employee!')
+		}
+	}
+}
+
+let employee = new Employee()
+employee.fullName = 'Bob Simth'
+if (employee.fullName) {
+	console.log(employee.fullName)
+}
+```
+
+es5: 
+
+```
+var passcode = 'secret1 passcode';
+var Employee = (function() {
+	function Employee() {
+		
+	}
+	Object.defineProperty(Employee.prototype, "fullName", {
+		get: function () {
+			return this._fullName;
+		},
+		set: function (newName) {
+			if (passcode && passcode === 'secret passcode') {
+				this._fullName = newName;
+			}
+			else {
+				console.log('Error: Unauthorized update of employee!')
+			}
+		},
+		enumerable: true,
+		configurable: true
+	});
+	return Employee;
+}());
+var employee = new Employee();
+employee.fullName = 'Bob Smith';
+if (employee.fullName) {
+	console.log(employee.fullName);
+}
+```
+
+> 静态属性
+
+```
+class Grid {
+	static origin = {x: 0, y: 0}
+	
+	scale: number
+	
+	constructor(scale: number) {
+		this.scale = scale
+	}
+	
+	calculateDistanceFromOrigin(point: { x: number; y: number }) {
+		let xDist = point.x - Grid.origin.x
+		let yDist = point.y - Grid.origin.y
+		return Math.sqrt(xDist * xDist + yDist * yDist) * this.scale
+	}
+}
+let grid1 = new Grid(1.0)
+let grid2 = new Grid(5.0)
+
+console.log(grid1.calculateDistanceFromOrigin({x:3,y:4}))
+console.log(grid2.calculateDistanceFromOrigin({x:3,y:4}))
+```
 
 
 
