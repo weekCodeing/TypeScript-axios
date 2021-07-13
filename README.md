@@ -610,6 +610,208 @@ console.log(grid1.calculateDistanceFromOrigin({x:3,y:4}))
 console.log(grid2.calculateDistanceFromOrigin({x:3,y:4}))
 ```
 
+> 高级技巧
+
+```
+abstract class Animal {
+	abstract makeSound(): void
+	move(): void {
+		console.log('roaming the earth...')
+	}
+}
+```
+
+```
+// 抽象方法不具体实现
+abstract class Department {
+	name: string
+	
+	constructor(name: string) {
+		this.name = name
+	}
+	
+	printName(): void {
+		console.log('Department name ' + this.name)
+	}
+	
+	abstract printMeeting(): void
+}
+
+class AccountingDepartment extends Department {
+	constructor() {
+		super('Accounting ad Auditing')
+	}
+	
+	printMeeting(): void {
+		console.log('dadaqianduan.cn')
+	}
+	
+	genterateReports(): void {
+		console.log('Generating accounting reports...')
+	}
+}
+
+let department: Department
+department = new AccountingDepartment()
+department.printName()
+department.printMeeting()
+department.genterateReports() // error 类型你是Department，没有这个方法
+```
+
+```
+class Greeter {
+	static standardGreeting = 'Hello, there'
+	
+	greeting: string
+	
+	constructor(message: string) {
+		this.greeting = message
+	}
+	
+	greet() {
+		return 'Hello, ' + this.greeting
+	}
+}
+
+let greeter: Greeter
+greeter = new Greeter('world')
+console.log(greeter.greet())
+```
+
+```
+// js
+
+// 构造函数 原型上的方法，静态属性
+
+// 类具有实例部分 和 静态部分
+var Greeter = (function() {
+	function Greeter(message) {
+		this.greeting = message;
+	}
+	Greeter.prototype.greet = function() {
+		return 'Hello, ' + this.greeting;
+	};
+	Greeter.standardGreeting = 'Hello, there';
+	return Greeter;
+}());
+var greeter;
+greeter = new Greeter('world');
+console.log(greeter.greet());
+```
+
+类可当接口使用
+
+```
+// 通常不建议，可以使用interface
+
+interface Point {
+	x: number
+	y: number
+}
+
+interface Point3d extends Point {
+	z: number
+}
+
+let point3d: Point3d = {x: 1, y: 2, z: 3}
+```
+
+> 函数
+
+函数类型，可选参数，默认参数，this，重载
+
+```
+function add(x, y) {
+	return x + y
+}
+
+let myAdd = function (x, y) {
+	return x + y
+}
+
+let z = 100
+function addToZ(x, y) {
+	return x + y + z
+}
+```
+
+```
+// ?可选参数 默认参数 = ''
+```
+
+使用默认参数 nudefined
+
+```
+function buildName(firstName: string, ...restOfName: string[]): string {
+	return firstName + '' +
+}
+
+let buildNameFn: (fname: striing, ...rest: string[]) => string =
+buildName
+```
+
+函数+this+重载
+
+```
+let deck = {
+	suits: ['hearts', 'spades', 'clubs', 'diamonds'],
+	cards: Array(52),
+	createCardPicker: function () {
+		return function () {
+			let pickedCard = Math.floor(Math.random() * 52)
+			let pickedSuit = Math.floor(pickedCard / 13)
+			
+			return {
+				suit: this.suits[pickedSuit],
+				card: pickedCard % 13
+			}
+		}
+	}
+}
+
+let cardPicker = deck.createCardPicker()
+let pickedCard = cardPicker()
+```
+
+this
+
+```
+interface UIElement {
+	addClickListener(onclick: (this: void, e: Event) => void): void
+}
+class Handler {
+	type: string
+	
+	onClickBad = (e: Event) => {
+		this.type = e.type
+	}
+}
+let h = new Handler()
+let uiElement: UIElement = {
+	addClickListener() {
+		
+	}
+}
+uiElement.addClickListener(h.onClickBad)
+```
+
+重载：参数和返回值呢？是可以发生变化的
+
+```
+function pickCard(x: { suit: string; card: number } []): number
+function pickCard(x: number): {suit: string; card: number}
+```
+
+泛型，使用泛型变量，泛型类型，泛型类，泛型约束
+
+```
+
+```
+
+
+
+
+
 
 
 
