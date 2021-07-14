@@ -805,17 +805,326 @@ function pickCard(x: number): {suit: string; card: number}
 泛型，使用泛型变量，泛型类型，泛型类，泛型约束
 
 ```
+function identity<T>(arg: T): T {
+	return arg
+}
 
+// let output = identity<string>('myString')
+
+let output = identity('myString')
 ```
 
+```
+function identity<T>(arg: T): T {
+	return arg
+}
+interface GenericIdentityFn<T> {
+	(arg: T): T
+}
+let myIdentity: GenericIdentityFn<number> = identity
+```
 
+> 泛型类+泛型约束
 
+```
+class GenericNumber<T> {
+	zeroValue: T
+	add: (x: T, y: T) => T
+}
 
+let myGenericNumber = new GenericNumber<number>()
+myGenericNumber.zeroValue = 0
+myGenericNumber.add  = function(x,y) {
+	return x + y
+}
 
+let stringNumeric = nuew GenericNumber<string>()
+stringNumeric.zeroValue = ''
+stringNumeric.add = function (x, y) {
+	return x + y
+}
 
+console.log(stringNumeric.add(stringNumeric.zeroValue, 'test'))
+```
 
+> 泛型约束
 
+```
+interface Lengthwise {
+	length: number
+}
+function loggingIdentity<T extends Lengthwise>(arg: T): T {
+	console.log(arg.length)
+	return arg
+}
+loggingIdentity({length: 1})
+```
 
+```
+function getProperty<T, K extends keyof T>(obj: T, key: K) {
+	return obj[key]
+}
 
+let x = {a: 1, b: 2, c: 3, d: 4}
 
+getProperty(x, 'a')
+getProperty(x, 'm') // error
+```
 
+工厂函数的构造器
+
+类类型：
+
+```
+function create<T>(c: { new(): T }): T {
+	return new c()
+}
+
+class BeeKeeper {
+	hasMask: boolean
+}
+
+class LionKeeper {
+	nametag: string
+}
+
+class Animal {
+	numLengs: number
+}
+
+class Bee extends Animal {
+	keeper: BeeKeeper
+}
+
+class Lion extends Animal {
+	keeper: LionKeeper
+}
+
+function createInstance<T extends Animal>(c: new() => T): T {
+	return new c()
+}
+```
+
+类型推断
+
+- 基础
+- 最佳通用类型
+- 上下文类型
+
+```
+let x = [0, 1, null]
+
+class Animal {
+	numLegs: number
+}
+
+class Bee extends Animal {
+	
+}
+
+class Lion extends Animal {
+	
+}
+
+let zoo = [new Bee(), new Lion()]
+```
+
+上下文类型
+
+```
+class Animal {
+	numLegs: number
+}
+
+class Bee extends Animal {
+	
+}
+
+class Lion extends Animal {
+	
+}
+
+function createZoo(): Animal[] {
+	return [new Bee(), new Lion()]
+}
+```
+
+> 交叉类型
+
+```
+// 多个类型
+function extend<T, U>(first: T, second: U): T & U {
+	let result = {} as T & U
+	
+	for (let id in first) {
+		result[id] = first[id] as any
+	}
+	
+	for (let id in second) {
+		if (!result.hasOwnProperty(id)) {
+			result[id] = second[id] as any
+		}
+	}
+	
+	return result
+}
+
+class Person {
+	constructor(public name: string) {
+		
+	}
+}
+
+interface Loggable {
+	log(): void
+}
+
+class ConsoleLogger implements Loggable {
+	log() {
+		// ..
+	}
+}
+
+var jim = extend(new Person('jim'), new ConsoleLogger)
+jim.name
+jim.log()
+// 拥有两个 的属性和方法的
+```
+
+> 联合类型
+
+```
+function padLeft(value: string, padding: any) {
+	if (typeof padding === 'number') {
+		return Array(padding + 1).join(' ') + value
+	}
+	if (typeof padding === 'string') {
+		return padding + value
+	}
+	throw new Error ('xxx')
+}
+// 联合类型 string | number
+padLeft('Hello world', '')
+```
+
+交叉类型:联合类型之和，联合类型之一
+
+调用公有方法：
+
+```
+// 只能
+interface Bird {
+	fly()
+	
+	layEggs()
+}
+
+interface Fish {
+	swin()
+	
+	layEggs()
+}
+
+function getSmallPet(): Fish | Bird {
+	// ...
+}
+
+let pet = getSmallPet()
+pet.layEggs()
+pet.swim() // error
+```
+
+> 类型保护
+
+```
+if (isFish(pet)) {
+	pet.swim()
+} else {
+	pet.fly()
+}
+
+// 类型断言 as
+function isFish(pet: Fish | Bird): pet is Fish {
+	return (pet as Fish).swim !== undefined
+}
+
+function isNumber(x: any): x is number {
+	return typeof x === 'number'
+}
+
+function isString(x: any): x is string {
+	return typeof x === 'string'
+}
+```
+
+```
+function padLeft(value: string, padding: string | number) {
+	if (isNumber(padding)) {
+		return Array(padding + 1).join(' ') + value
+	}
+	if (isString(padding)) {
+		return paddiing + value
+	}
+	throw new Error(`dadaqianduan.cn`)
+}
+```
+
+```
+// is
+// typeof
+// instanceof
+
+function getRandomPet(): Fish | Bird {
+	return Math.random() > 0.5 ? new Bird() : new Fish()
+}
+
+let pet = getRandomPet()
+
+if (pet instanceof Bird) {
+	pet.fly()
+}
+
+if (pet instanceof Fish) {
+	pet.swim()
+}
+```
+
+> null类型+字符串字面量类型
+
+```
+// null undefined
+function f(sn: string | null): string {
+	return sn || 'default'
+}
+```
+
+```
+function broken(name: string | null): string {
+	function postfix(epither: string) {
+		return name!.charAt(0) + '. the' + epither
+	}
+	name = name || 'Bob'
+	return postfix(name)
+}
+```
+
+> 字符串字面量类型
+
+```
+type Easing = 'ease-in' | 'ease-out' | 'ease-in-out'
+
+class UIElement {
+	animate (dx: number, dy: number, easing: Easing) {
+		if (easing === 'ease-in') {
+			// ...
+		} else if (easing === 'ease-out') {
+			// ...
+		} else {
+			
+		}
+	}
+}
+
+let button = new UIElement(0, 0, 'ease-in')
+button.animate(0, 0, null)
+```
