@@ -36,6 +36,149 @@ TypeScript重构axios
 
 1. ts-axios库单元测试，构建和发布
 
+## features
+
+- 在浏览器使用XMLHttpRequest对象通讯
+- 支持Promise API
+- 支持请求和响应的拦截器
+- 支持请求数据和响应数据的转换
+- 支持请求的取消
+- JSON数据的自动转换
+- 客户端防止XSRF
+
+typescript library starter
+
+它是一个开源的typescript开发基础库的脚手架工具，可以帮助我们快速初始化一个TypeScripT项目
+
+git clone
+
+cd ts-axios
+
+npm install
+
+```
+editorconfig // 编辑器的配置
+gitignore
+tsconfig.json
+tslint.json
+rollup.config.ts // 打包构建
+
+src // 源码
+test // 单元测试
+tools // 发布
+```
+
+TypeScript library starter 创建的项目集成了很多优秀开源工具:
+
+```
+使用RollupJS帮助我们打包
+使用Prettier和TSLint帮助我们格式化代码以及保证代码风格一致性
+使用TypeDoc帮助我们自动生成文档并部署到GitHub pages
+使用Jest帮助我们做单元测试
+使用Commitizen帮助我们生成规范化的提交注解
+使用Semantic release帮助我们管理版本和发布
+使用husky帮助我们更简单地使用git hooks
+使用Conventional changelog帮助我们通过代码提交信息自动生成change log 
+```
+
+> 对标目标+重现过程+分析原因+总结经验
+
+npm script
+
+- `npm run list`,使用TSLint工具检查src和test目录下TypeScript代码的可读性，可维护性和功能性错误。
+- `npm start`,观察者模式运行`rollup`工具打包代码
+- `npm test`,运行`jest`工具跑单元测试
+- `npm run commit`,运行`commitizen`工具提交格式化的`git commit`注解
+- `npm run build`,运行`rollup`编译打包`TypeScript`代码，并运行`typedoc`工具生成文档
+
+```
+npm run start 打包
+npm run lint
+npm test 单元测试
+```
+
+```
+// 查看远程分支
+git remote -v
+
+git remote add origin git@gith...
+
+git pull origin master
+
+// rm README.md 删除
+
+git branch // 查看分支
+
+git add . // 工作区提交到暂停区
+
+git commit -m //
+
+// 工具
+
+npm run commit
+```
+
+> 代码提交
+
+- feat: A new feature
+- fix: A bug fix
+- docs: Documentation only changes
+- style: Changes that do not affect the meaning of the code (white-space,
+- formatting, missing semi-colons, etc)
+- refactor: A code change that neither fixes a bug nor adds a feature
+- perf: A code change that improves performance
+- test: Adding missing tests or correcting existing tests
+
+```
+// 提交的主题
+feat: A new feature
+// 修改哪些文件等等
+all the file
+// 简单的描述，这次的改编
+init project by typescript library starter
+// Are there any breaking changes? No
+// Does this change affect any open issues? No
+
+git push origin master
+```
+
+> 编写代码
+
+实现简单的发送请求功能，即客户端通过XMLHttpRequest对象把请求发送到server端，
+server端能收到请求并响应即可。
+
+实现axios最基本的操作，通过传入一个对象发送请求：
+
+```
+axios({
+	method: 'get',
+	url: '/simple/get',
+	params: {
+		a: 1,
+		b: 2
+	}
+})
+```
+
+创建入口文件
+
+我们删除src目录下的文件，先创建一个index.ts文件，作为整个库的入口文件，
+
+定义一个axios方法，
+
+```
+function axios(config) {
+	
+}
+
+export default axios
+```
+
+学习tsconfig.json
+
+
+
+
 ## 安装 TypeScript
 
 ```
@@ -1128,3 +1271,4 @@ class UIElement {
 let button = new UIElement(0, 0, 'ease-in')
 button.animate(0, 0, null)
 ```
+
