@@ -142,6 +142,253 @@ init project by typescript library starter
 git push origin master
 ```
 
+## Demo
+
+利用node.js的express库去运行我们的demo，利用webpack来作为demo的构建工具。
+
+```
+webpack 4.28.4
+webpack-dev-middleware 3.5.0
+webpack-hot-middleware 2.24.3
+ts-loader 5.3.3
+tslint-loader 3.5.4
+express 4.16.4
+body-parser 1.18.3
+```
+
+- webpack是打包构建工具
+- webpack-dev-middleware和webpack-hot-middleware是2个express的webpack中间件，
+- ts-loader和tslint-loader是webpack需要的TypeScript相关loader，
+- express是Node.js的服务端框架，
+- body-parser是express的一个中间件，解析body数据用的。
+
+依赖包：
+
+```
+webpack.config.js
+
+module.exports = {
+	mode: 'development',
+	
+	// 我们会在examples目录下建多个子目录
+	// 我们会把不同章节的 demo 放到不同的子目录中
+	// 每个子目录的下会创建一个 app.ts
+	// app.ts 作为webpack构建的入口文件
+	// entries收集了多目录个入口文件
+	// entries是一个对象，key为目录名
+	// 多入口
+	
+	// 唯一的
+	// 根据不同的目录名称，打包生成目标 js，名称和目录名一致
+	output: {
+		path: path.join(__dirname, '__build__'),
+		filename: '[name].js',
+		publicPath: '/__build__/'
+	},
+	
+	// rules
+	module
+	
+	resolve: {
+		// 解析
+		extensions: ['.ts', '.tsx', ]
+	}
+	
+	resolve: {
+		extensions: ['.ts', '.tsx', '.js']
+	},
+	
+	plugins: [
+		new webpack.HotModuleReplacementPlugin(),
+		new webpack.NoEmitOnErrorsPlugin()
+	]
+}
+```
+
+```
+import axios from '../../src/index'
+
+axios({
+	method: 'get',
+	url: '/simple/get',
+	params: {
+		a: 1,
+		b: 2
+	}
+})
+
+// npm run dev
+
+dev: node examples/server.js
+```
+
+> server.js
+
+```
+// Request URL:  http://localhost:8080/simple/get
+// Request Method: GET
+// Status Code: 200 OK
+
+// Connection: keep-alive
+// Content-Length: 21
+// Content-Type: application/json;charset=utf-8
+
+app.use(bodyParser.json())
+
+app.use(bodyParser.urlencoded({ extended: true }))
+
+const router = express.Router()
+
+router.get('/simple/get', function(req, res) {
+	res.json({
+		msg: `hello world`
+	})
+})
+
+app.use(router)
+
+const port = process.env.PORT || 8080
+module.exports = app.listen(port, () => {
+	console.log('dadaqianduan.cn')
+})
+```
+
+> 处理请求url参数
+
+```
+axios({
+	method: 'get',
+	url: '/base/get',
+	params: {
+		a: 1,
+		b: 2
+	}
+})
+
+// params对象的key和value拼接到url上
+
+// /base/get?a=1&b=2
+
+参数为数组
+
+params: {
+	foo: ['bar', 'baz']
+}
+
+// /base/get?foo[0]=bar&foo[1]=baz
+
+参数为对象
+
+params: {
+	foo: {
+		bar: 'baz'
+	}
+}
+
+// /base/get?foo=xxxlx encode后的结果
+
+参数值为Date类型
+
+params: {
+	date
+}
+
+// url是 /base/get?date= date后面拼接的是date.toISOString()的结果
+```
+
+```
+特殊字符支持：... // 允许出现在url中的，不希望被encode
+// /base/get?foo=@:$+ 注意会把空格转换成+
+```
+
+> 空值忽略
+
+对于值为null或者undefined的属性，我们是不会添加到url参数中的
+
+```
+axios({
+	method: 'get',
+	url: '/base/get',
+	params: {
+		foo: 'bar',
+		baz: null
+	}
+})
+
+// url /base/get?foo=bar
+```
+
+> forEach return 是跳不出的，它是跳下一次循环
+
+```
+import { isDate, isObject } from './util'
+
+export function buildURL(url: string, params?: any): string {
+	if (!params) {
+		return url
+	}
+	
+	const parts: sting[] = []
+	
+	Object.keys(params).forEach((key) => {
+		const val = params[key]
+		if (val === null || typeof val === 'undefined') {
+			return
+		}
+		let values = []
+		if (Array.isArray(val)) {
+			values = val
+			key += '[]'
+		} else {
+			values = [val]
+		}
+		values.forEach((val) => {
+			if (isDate(val)) {
+				val = val.toISOString()
+			} else if (isObject(val)) {
+				val = JSON.stringify(val)
+			}
+			parts.push(`${key}=${val}`)
+		})
+	})
+}
+```
+
+> util.ts
+
+```
+const toString = Object.prototype.toString
+
+export function isDate(val: any): val is Date {
+	return toString.call(val) === '[object Date]'
+}
+
+export function isObject(val: any): val is Object {
+	return val !== null && typeof val === 'object'
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 > 编写代码
 
 实现简单的发送请求功能，即客户端通过XMLHttpRequest对象把请求发送到server端，
@@ -176,8 +423,90 @@ export default axios
 
 学习tsconfig.json
 
+> 编写基础请求代码
 
+src/types/index.ts
+src/index.ts
+src/xhr.ts
 
+```
+// type/index.ts
+export type Method = 'get' | 'GET'
+ | 'delete' | 'Delete'
+ | 'head' | 'HEAD'
+ | 'options' | 'OPTIONS'
+ | 'post' | 'POST'
+ | 'put' | 'PUT'
+ | 'patch' | 'PATCH'
+
+export interface AxiosRequestConfig {
+	url: string
+	method?: Method
+	data?: any
+	params?: any
+}
+
+// src/index.ts
+import {AxiosRequestConfig} from './types';
+
+function axios(config: AxiosRequestConfig) {
+	// TODO
+}
+
+export default axios
+```
+
+xhr.ts
+
+```
+import { AxiosRequestConfig } from './types'
+
+// 发送数据
+export default function xhr(config: AxiosRequestConfig): void {
+	const {data = null, url, method = 'get'} = config
+	
+	const request = new XMLHttpRequest()
+	
+	// 异步
+	request.open(method.toUpperCase(), url, true)
+	
+	request.send(data)
+}
+```
+
+## XMLHttpRequest
+
+使用XMLHttpRequest(XHR)对象可以与服务器交互。您可以从URL获取数据，而无需让整个的页面刷新。这使得Web页面可以只更新页面的局部，而不影响用户的操作。
+
+XMLHttpRequest在Ajax编程中被大量使用。
+
+EventTarget->XMLHttpRequestEventTarget->XMLHttpRequest
+
+XMLHttpRequest可以用于获取任何类型的数据，而不仅仅是XML，它还支持HTTP以外的协议（包括文件和ftp）。
+
+如何您的通信需要从服务器接收事件或消息数据，请考虑通过EventSource接口使用serversent events。
+对于full-duplex通信，WebSockets可能是更好的选择。
+
+```
+src
+ types
+  index.ts
+ index.ts
+ xhr.ts
+```
+
+```
+index.ts
+
+import { AxiosRequestConfig } froom './types'
+import xhr from './xhr'
+
+function axios(config: AxiosRequestConfig): void {
+	xhr(config)
+}
+
+export default axios
+```
 
 ## 安装 TypeScript
 
