@@ -1,0 +1,25 @@
+{
+    "name": "TypeScript-axios",
+    "version": "1.0.0",
+    "description": "TypeScript-axios",
+    "author": "Jeskson",
+    "license": "MIT",
+    "devDependencies": {
+        "vuepress": "^1.9.5",
+        "vuepress-plugin-dynamic-title": "^1.0.0"
+    },
+    "scripts": {
+        "docs:dev": "vuepress dev docs",
+        "docs:build": "vuepress build docs"
+    },
+    "dependencies": {
+        "@vuepress-reco/vuepress-plugin-back-to-top": "^1.6.0",
+        "@vuepress-reco/vuepress-plugin-screenfull": "^1.0.1",
+        "@vuepress/plugin-medium-zoom": "^1.9.5",
+        "vuepress-plugin-code-copy": "^1.0.6",
+        "@vuepress-reco/vuepress-plugin-bulletin-popover": "^1.5.7",
+        "@vuepress-reco/vuepress-plugin-kan-ban-niang": "^1.0.5",
+        "@vuepress-reco/vuepress-plugin-loading-page": "^1.4.0",
+        "vuepress-theme-reco": "^1.6.10"
+    }
+}
